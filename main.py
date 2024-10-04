@@ -65,11 +65,6 @@ async def generate_certificates():
             print(out.returncode)
             if out.returncode:
                 raise Exception(out.stderr)
-            # if component != "db":
-            #     out = subprocess.run(f"cp service.env ../{component}/", cwd=PATH, shell=True, capture_output=True, text=True)
-            #     print(out.returncode)
-            #     if out.returncode:
-            #         raise Exception(out.stderr)
         return Response(content=log)
     except Exception as e:
         return Response(content=e.__str__(), status_code=500)
@@ -99,11 +94,14 @@ async def stop_component(component_name: str):
 
 @router.get("/db/{database_name}/{table_name}")
 async def get_database(database_name: str, table_name: str):
+    password=""
+    with open(PATH+"db_password.txt") as f:
+        password = f.read()
     conn = await aiomysql.connect(
         host="localhost",
         port=3306,
         user="root",
-        password="QUS8R1GXTeTRlc5",
+        password=password,
         db=database_name
     )
     cursor = await conn.cursor()
