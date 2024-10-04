@@ -246,12 +246,12 @@
         <role-name>api</role-name>
     </auth-constraint>
     <user-data-constraint>
-       <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+       <transport-guarantee>NONE</transport-guarantee>
     </user-data-constraint>
   </security-constraint>
 
   <login-config>
-       <auth-method>CLIENT-CERT</auth-method>
+       <auth-method>DIGEST</auth-method>
   </login-config>
 
   <security-role>

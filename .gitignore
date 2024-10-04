@@ -24,3 +24,10 @@ pom.xml.versionsBackup
 target/
 *.jar
 config.properties
+
+*.pom
+*.bin
+*.log
+*.db
+owner_pub_key
+git_push.bash
