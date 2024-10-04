@@ -31,3 +31,12 @@ config.properties
 *.db
 owner_pub_key
 git_push.bash
+*.md
+db_password.txt
+.env
+*.req
+*.srl
+
+app-data/
+__pycache__/
+service.env

@@ -117,7 +117,7 @@
   </security-constraint>
 
   <login-config>
-       <auth-method>DIGEST</auth-method>
+       <auth-method>BASIC</auth-method>
   </login-config>
 
   <security-role>

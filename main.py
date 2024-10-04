@@ -92,6 +92,17 @@ async def stop_component(component_name: str):
     except Exception as e:
         return Response(content=e.__str__(), status_code=500)
 
+@router.get("/stop")
+async def stop_all_components():
+    try:
+        log=""
+        for component in COMPONENTS:
+            out = subprocess.run(f"cd {DEMOPATH}{component}; sudo docker-compose down", shell=True, capture_output=True, text=True)
+            log += outlog(out)
+        return Response(content=log)
+    except Exception as e:
+        return Response(content=e.__str__(), status_code=500)
+
 @router.get("/db/{database_name}/{table_name}")
 async def get_database(database_name: str, table_name: str):
     password=""
