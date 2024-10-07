@@ -1,7 +1,7 @@
 from fastapi import FastAPI, APIRouter, Response
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-import subprocess, os, aiomysql
+import subprocess, os, aiomysql, requests
 
 app = FastAPI()
 
@@ -95,13 +95,47 @@ async def stop_component(component_name: str):
 @router.get("/stop")
 async def stop_all_components():
     try:
-        log=""
-        for component in COMPONENTS:
-            out = subprocess.run(f"cd {DEMOPATH}{component}; sudo docker-compose down", shell=True, capture_output=True, text=True)
-            log += outlog(out)
+        out = subprocess.run(f"./stop_components.bash", shell=True, capture_output=True, text=True)
+        log = outlog(out)
         return Response(content=log)
+        # log=""
+        # for component in COMPONENTS:
+        #     out = subprocess.run(f"cd {DEMOPATH}{component}; sudo docker-compose down", shell=True, capture_output=True, text=True)
+        #     log += outlog(out)
+        # return Response(content=log)
     except Exception as e:
         return Response(content=e.__str__(), status_code=500)
+
+@router.post("/rvinfo")
+async def create_rv_info():
+    res = requests.post(url="http://localhost:8039/api/v1/rvinfo", headers={"Content-Type": 'text/plain'}, auth=('apiUser','1234'), data='[[[5,"host.docker.internal"],[3,8041],[12,2],[2,"127.0.0.1"],[4,8041]]]')
+    data = res.content
+    return data
+
+@router.get("/certificate")
+async def get_certificate(alias: str='SECP256R1'):
+    res = requests.get(url="http://localhost:8042/api/v1/certificate", params={"alias": alias}, headers={"Content-Type": 'text/plain'}, auth=('apiUser','1234'))
+    data = res.content
+    return data
+
+@router.get("/deviceinfo/{seconds}")
+async def get_device_info(seconds: int):
+    res = requests.get(url=f"http://localhost:8039/api/v1/deviceinfo/{seconds}", headers={"Content-Type": 'text/plain'}, auth=('apiUser','1234'))
+    data = res.content
+    return data
+
+@router.get("/vouchers/{deviceSerialNo}")
+async def pem_cert(deviceSerialNo: str, owner_cert: str):
+    res = requests.post(url=f"http://localhost:8039/api/v1/mfg/vouchers/{deviceSerialNo}", data=owner_cert, headers={"Content-Type": 'text/plain'}, auth=('apiUser','1234'))
+    data = res.content
+    return data
+
+@router.get("/vouchers")
+async def pem_cert_owner(owner_cert: str):
+    res = requests.post(url=f"http://localhost:8039/api/v1/owner/vouchers", data=owner_cert, headers={"Content-Type": 'text/plain'}, auth=('apiUser','1234'))
+    data = res.content
+    return data
+
 
 @router.get("/db/{database_name}/{table_name}")
 async def get_database(database_name: str, table_name: str):
