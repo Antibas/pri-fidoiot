@@ -108,18 +108,18 @@ async def stop_all_components():
 
 @router.get("/rvinfo")
 async def create_rv_info():
-    return requests.post(url="http://localhost:8039/api/v1/rvinfo", headers={"Content-Type": 'text/plain'}, auth=('apiUser','1234'), data='[[[5,"host.docker.internal"],[3,8041],[12,2],[2,"127.0.0.1"],[4,8041]]]')
+    return requests.post(url="http://localhost:8039/api/v1/rvinfo", headers={"Content-Type": 'text/plain'}, auth=('apiUser','1234'), data=[[[5,"host.docker.internal"],[3,8041],[12,2],[2,"127.0.0.1"],[4,8041]]])
 
 @router.get("/certificate")
 async def get_certificate(alias: str='SECP256R1'):
-    return requests.get(url="http://localhost:8042/api/v1/certificate", params={"alias": alias}, headers={"Content-Type": 'text/plain'}, auth=('apiUser','1234'))
+    return requests.get(url="http://localhost:8042/api/v1/certificate", params={"alias": alias}, headers={"Content-Type": 'text/plain', 'Accept': 'text/plain'}, auth=('apiUser','1234')).content
 
 @router.get("/deviceinfo/{seconds}")
 async def get_device_info(seconds: int):
-    return requests.get(url=f"http://localhost:8039/api/v1/deviceinfo/{seconds}", headers={"Content-Type": 'text/plain'}, auth=('apiUser','1234'))
+    return requests.get(url=f"http://localhost:8039/api/v1/deviceinfo/{seconds}", auth=('apiUser','1234'))
 
 @router.post("/vouchers/{deviceSerialNo}")
-async def pem_cert(deviceSerialNo: str, owner_cert: dict):
+async def pem_cert(deviceSerialNo: str, owner_cert: str):
     return requests.post(url=f"http://localhost:8039/api/v1/mfg/vouchers/{deviceSerialNo}", data=owner_cert, headers={"Content-Type": 'text/plain'}, auth=('apiUser','1234'))
 
 @router.get("/vouchers")
